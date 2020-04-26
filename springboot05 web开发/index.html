@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="pandaaaaaa">
+
+
+
+
+
+<title>springboot05 web开发 | pandaaaaaa&#39;s blogs</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">pandaaaaaa&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">pandaaaaaa&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">springboot05 web开发</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">pandaaaaaa</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">April 26, 2020&nbsp;&nbsp;20:03:52</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Java/">Java</a>
+                            
+                                <a href="/categories/Java/SpringBoot/">SpringBoot</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>前边提到springboot通过<code>xxxAutoConfiguration</code>来帮助我们进行自动配置，<code>xxxProperties</code>来装配配置文件的内容。web模块的相关配置就在<code>WebMvcAutoConfiguration</code>中。</p>
+<p>分析springboot-web模块可以从这几个地方入手：</p>
+<ol>
+<li><code>WebMvcAutoConfiguration</code></li>
+<li><code>WebMvcProperties</code></li>
+<li><code>ViewResolver</code>自动配置</li>
+<li>静态资源自动映射</li>
+<li>Formatter与Converter自动配置</li>
+<li><code>HttpMessageConverter</code>自动配置</li>
+<li>静态首页</li>
+<li>favicon</li>
+<li>错误处理</li>
+</ol>
+<h2 id="web环境下对静态资源的映射规则"><a href="#web环境下对静态资源的映射规则" class="headerlink" title="web环境下对静态资源的映射规则"></a>web环境下对静态资源的映射规则</h2><p><code>WebMvcAutoConfiguration</code>类（该类实现<code>WebMvcConfigurer</code>接口）的<code>addResourceHandlers</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addResourceHandlers</span><span class="params">(ResourceHandlerRegistry registry)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (!<span class="keyword">this</span>.resourceProperties.isAddMappings()) &#123;</span><br><span class="line">		logger.debug(<span class="string">"Default resource handling disabled"</span>);</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// 从properties文件中获取cachePeriod(缓存时间)</span></span><br><span class="line">    <span class="comment">// 将为下边的静态资源配置该属性</span></span><br><span class="line">	Duration cachePeriod = <span class="keyword">this</span>.resourceProperties.getCache().getPeriod();</span><br><span class="line">	CacheControl cacheControl = <span class="keyword">this</span>.resourceProperties.getCache().getCachecontrol().toHttpCacheControl();</span><br><span class="line">    <span class="comment">// 若没有配置/webjars/**的映射，将把所有/webjars/**映射到类路径下的/META-INF/resources/webjars/</span></span><br><span class="line">	<span class="keyword">if</span> (!registry.hasMappingForPattern(<span class="string">"/webjars/**"</span>)) &#123;</span><br><span class="line">		customizeResourceHandlerRegistration(registry.addResourceHandler(<span class="string">"/webjars/**"</span>)</span><br><span class="line">				.addResourceLocations(<span class="string">"classpath:/META-INF/resources/webjars/"</span>)</span><br><span class="line">				.setCachePeriod(getSeconds(cachePeriod)).setCacheControl(cacheControl));</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// staticPathPattern = "/**"</span></span><br><span class="line">	String staticPathPattern = <span class="keyword">this</span>.mvcProperties.getStaticPathPattern();</span><br><span class="line">    <span class="comment">// 若没有配置/**的映射，将把所有/**映射到类路径下的/META-INF/resources/,/resources/, /static/, /public/</span></span><br><span class="line">	<span class="keyword">if</span> (!registry.hasMappingForPattern(staticPathPattern)) &#123;</span><br><span class="line">		customizeResourceHandlerRegistration(registry.addResourceHandler(staticPathPattern)</span><br><span class="line">    <span class="comment">// this.resourceProperties.getStaticLocations()=[/META-INF/resources/,/resources/, /static/, /public/]</span></span><br><span class="line">.addResourceLocations(getResourceLocations(<span class="keyword">this</span>.resourceProperties.getStaticLocations()))</span><br><span class="line">				.setCachePeriod(getSeconds(cachePeriod)).setCacheControl(cacheControl));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>简单来说：</p>
+<ul>
+<li><p>所有 <code>/webjars/**</code> ，都去 <code>classpath:/META-INF/resources/webjars/</code> 找资源</p>
+</li>
+<li><p>其他的所有请求，都默认去/META-INF/resources/,/resources/, /static/, /public/中找</p>
+</li>
+</ul>
+<h3 id="webjars"><a href="#webjars" class="headerlink" title="webjars"></a>webjars</h3><p><code>webjars</code>：以jar包的方式引入静态资源。</p>
+<p>使用时我们仅需在<a href="https://www.webjars.org/" target="_blank" rel="noopener">webjars官网</a>寻找坐标，添加到<code>pom</code>中即可。</p>
+<p>这里以jQuery为例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.webjars<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jquery<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.4.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>测试访问<a href="http://localhost:8080/webjars/jquery/3.4.1/jquery.js" target="_blank" rel="noopener">http://localhost:8080/webjars/jquery/3.4.1/jquery.js</a></p>
+</blockquote>
+<h3 id="非webjars"><a href="#非webjars" class="headerlink" title="非webjars"></a>非webjars</h3><p>上边已经说明非，webjars（我们自己的静态资源）默认会去类路径下的/META-INF/resources/,/resources/, /static/, /public/找。</p>
+<p>如：</p>
+<blockquote>
+<p>目录中的panda.png文件访问路径：<a href="http://localhost:8080/panda.png" target="_blank" rel="noopener">http://localhost:8080/panda.png</a></p>
+</blockquote>
+<p><img src="https://s1.ax1x.com/2020/04/26/JgyBjA.png" alt="panda.png"></p>
+<h3 id="欢迎页映射"><a href="#欢迎页映射" class="headerlink" title="欢迎页映射"></a>欢迎页映射</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Optional&lt;Resource&gt; <span class="title">getWelcomePage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	String[] locations = getResourceLocations(<span class="keyword">this</span>.resourceProperties.getStaticLocations());</span><br><span class="line">	<span class="keyword">return</span> Arrays.stream(locations).map(<span class="keyword">this</span>::getIndexHtml).filter(<span class="keyword">this</span>::isReadable).findFirst();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> Resource <span class="title">getIndexHtml</span><span class="params">(String location)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">this</span>.resourceLoader.getResource(location + <span class="string">"index.html"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isReadable</span><span class="params">(Resource resource)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> resource.exists() &amp;&amp; (resource.getURL() != <span class="keyword">null</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>若为配置locations默认即为[/META-INF/resources/,/resources/, /static/, /public/]，将他们下的index.html作为index页面。过滤（<code>isReadable</code>方法）后将第一的值作为欢迎页面。</p>
+<h3 id="网站图标映射（favicon-ico）"><a href="#网站图标映射（favicon-ico）" class="headerlink" title="网站图标映射（favicon.ico）"></a>网站图标映射（favicon.ico）</h3><p>将其命名为<code>favicon.ico</code>放在静态资源文件（resources）下即可。</p>
+<h2 id="thymeleaf"><a href="#thymeleaf" class="headerlink" title="thymeleaf"></a>thymeleaf</h2><p>关于thymeleaf，<a href="https://www.cnblogs.com/ityouknow/p/5833560.html" target="_blank" rel="noopener">纯洁的微笑-thymeleaf</a>这篇文章已经介绍的很详细，参考即可。</p>
+<h2 id="spring-MVC自动配置"><a href="#spring-MVC自动配置" class="headerlink" title="spring MVC自动配置"></a>spring MVC自动配置</h2><p>自动配置在Spring的默认值之上添加了以下功能：</p>
+<ul>
+<li>包含<code>ContentNegotiatingViewResolver</code>和<code>BeanNameViewResolver</code> beans。–&gt;视图解析器</li>
+<li>支持提供静态资源，包括对webjars的支持。–&gt;静态资源文件夹</li>
+<li>自动注册<code>Converter</code>，<code>GenericConverter</code>和<code>Formatter</code> beans。–&gt;Converter转换器 Formatter格式化器</li>
+<li>支持<code>HttpMessageConverters</code>。–&gt;用来转换http响应和请求，如将bean转换为json</li>
+<li>自动注册<code>MessageCodesResolver</code>。–&gt; 定义错误代码生成规则</li>
+<li>静态<code>index.html</code>支持。–&gt; 定义首页</li>
+<li>自定义<code>Favicon</code>支持。–&gt; 定义图标</li>
+<li>自动使用<code>ConfigurableWebBindingInitializer</code> bean（<a href="https://www.springcloud.cc/spring-boot.html#boot-features-spring-mvc-web-binding-initializer" target="_blank" rel="noopener">官方介绍</a>）。</li>
+</ul>
+<h3 id="ViewResolver视图解析器"><a href="#ViewResolver视图解析器" class="headerlink" title="ViewResolver视图解析器"></a>ViewResolver视图解析器</h3><p>springboot自动配置了ViewResolver，视图解析器：根据方法的返回值得到视图对象（View），由视图对象决定如何渲染（转发还是重定向）</p>
+<ul>
+<li>ContentNegotiatingViewResolver：组合所有的视图解析器</li>
+</ul>
+<p>在WebMvcAutoConfiguration的viewResolver方法中，创建了WebMvcAutoConfiguration类，该类的resolveViewName方法，返回合适的view对象。</p>
+<p><img src="https://s1.ax1x.com/2020/04/26/JgygN8.png" alt="image-20200324212103337"> </p>
+<p>前边提到了view对象，那么这些对象从何而来？</p>
+<p>查看getCandidateViews方法，可以看到使用了viewResolvers属性，该属性在initServletContext方法中完成赋值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> List&lt;View&gt; <span class="title">getCandidateViews</span><span class="params">(String viewName, Locale locale, List&lt;MediaType&gt; requestedMediaTypes)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    List&lt;View&gt; candidateViews = <span class="keyword">new</span> ArrayList();</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.viewResolvers != <span class="keyword">null</span>) &#123;</span><br><span class="line">        Assert.state(<span class="keyword">this</span>.contentNegotiationManager != <span class="keyword">null</span>, <span class="string">"No ContentNegotiationManager set"</span>);</span><br><span class="line">        Iterator var5 = <span class="keyword">this</span>.viewResolvers.iterator();</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initServletContext</span><span class="params">(ServletContext servletContext)</span> </span>&#123;</span><br><span class="line">    Collection&lt;ViewResolver&gt; matchingBeans = BeanFactoryUtils.beansOfTypeIncludingAncestors(<span class="keyword">this</span>.obtainApplicationContext(), ViewResolver<span class="class">.<span class="keyword">class</span>).<span class="title">values</span>()</span>;  <span class="comment">// 使用BeanFactoryUtils获取容器中的ViewResolver类</span></span><br><span class="line">    ViewResolver viewResolver;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.viewResolvers == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.viewResolvers = <span class="keyword">new</span> ArrayList(matchingBeans.size());</span><br><span class="line">        Iterator var3 = matchingBeans.iterator();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(var3.hasNext()) &#123;</span><br><span class="line">            viewResolver = (ViewResolver)var3.next();</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">this</span> != viewResolver) &#123;</span><br><span class="line">                <span class="keyword">this</span>.viewResolvers.add(viewResolver);</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以当我们要添加一个视图解析器时，仅需将该视图解析器添加到容器中，springboot就会自动的将其组合进来。</p>
+<h4 id="测试案例"><a href="#测试案例" class="headerlink" title="测试案例"></a>测试案例</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 测试用例</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ViewResolverDemo</span> <span class="keyword">implements</span> <span class="title">ViewResolver</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> View <span class="title">resolveViewName</span><span class="params">(String s, Locale locale)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;  <span class="comment">// 由于仅做测试，这里不添加实现</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们在DispatchServlet的doDispatch方法上添加断点，然后请求任意资源，即可在viewResolver中找到我们添加的demo类。</p>
+<p><img src="https://s1.ax1x.com/2020/04/26/JgyW9g.png" alt="image-20200324235331129"></p>
+<h3 id="转换器、格式化器"><a href="#转换器、格式化器" class="headerlink" title="转换器、格式化器"></a>转换器、格式化器</h3><ul>
+<li><code>Converter</code>：转换器：进行数据类型的转换（如将表单数据转为user）</li>
+<li><code>Formatter</code> 格式化器：进行数据的格式化（如时间的格式化）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="comment">//在配置文件中配置日期格式化的规则</span></span><br><span class="line"><span class="meta">@ConditionalOnProperty</span>(prefix = <span class="string">"spring.mvc"</span>, name = <span class="string">"date-format"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Formatter&lt;Date&gt; <span class="title">dateFormatter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> DateFormatter(<span class="keyword">this</span>.mvcProperties.getDateFormat());<span class="comment">//日期格式化组件</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>同样，需要添加格式化器、转换器时，我们只需要放在容器中即可</strong></p>
+<h3 id="HttpMessageConverters"><a href="#HttpMessageConverters" class="headerlink" title="HttpMessageConverters"></a>HttpMessageConverters</h3><ul>
+<li><code>HttpMessageConverter</code>：SpringMVC用来转换Http请求和响应的（如对象转json）</li>
+<li><code>HttpMessageConverters</code> 仅有一个有参构造器，参数只能是从容器中确定，获取所有的HttpMessageConverter；</li>
+</ul>
+<p><strong>自己给容器中添加HttpMessageConverter，只需要将自己的组件注册容器中（@Bean,@Component）</strong></p>
+<h3 id="MessageCodesResolver"><a href="#MessageCodesResolver" class="headerlink" title="MessageCodesResolver"></a>MessageCodesResolver</h3><p>定义错误代码的生成规则。</p>
+<h3 id="ConfigurableWebBindingInitializer"><a href="#ConfigurableWebBindingInitializer" class="headerlink" title="ConfigurableWebBindingInitializer"></a>ConfigurableWebBindingInitializer</h3><p>用来初始化webDataBinder，而webDataBinder的作用是将web数据绑定到JavaBean中，此过程会用到上边的Converter、Formatter等。当然我们可以配置一个<code>ConfigurableWebBindingInitializer</code>来替换默认的，只需要将他添加到容器中即可。</p>
+<h3 id="扩展springmvc"><a href="#扩展springmvc" class="headerlink" title="扩展springmvc"></a>扩展springmvc</h3><p>官方文档：</p>
+<blockquote>
+<p>如果你想保留Spring Boot MVC功能，并且你想添加额外的 <a href="https://docs.spring.io/spring/docs/5.1.3.RELEASE/spring-framework-reference/web.html#mvc" target="_blank" rel="noopener">MVC配置</a>（拦截器，格式化程序，视图控制器和其他功能），你可以添加自己的<code>@Configuration</code>类<code>WebMvcConfigurer</code>类但<strong>没有</strong> <code>@EnableWebMvc</code>。如果您希望提供<code>RequestMappingHandlerMapping</code>，<code>RequestMappingHandlerAdapter</code>或<code>ExceptionHandlerExceptionResolver</code>的自定义实例，则可以声明<code>WebMvcRegistrationsAdapter</code>实例以提供此类组件。</p>
+</blockquote>
+<p>springmvc可以使用配置类来代替配置文件，只需要实现WebMvcConfigurer接口，并将它加入容器即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">myWebMvcConfigurer</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br></pre></td></tr></table></figure>
+
+<p>案例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:view-controller</span> <span class="attr">path</span>=<span class="string">"/hello"</span> <span class="attr">view-name</span>=<span class="string">"success"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyMvcConfigurer</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addViewControllers</span><span class="params">(ViewControllerRegistry registry)</span> </span>&#123;</span><br><span class="line">        registry.addViewController(<span class="string">"/hello"</span>).setViewName(<span class="string">"success"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>两者等效。</p>
+<h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><p>我们知道<code>WebMvcAutoConfiguration</code>是SpringMVC的自动配置类，下面这个类是<code>WebMvcAutoConfiguration</code>中的一个内部类</p>
+<p><img src="https://s1.ax1x.com/2020/04/26/JgycAf.png" alt="1573891167026"></p>
+<p>看一下<code>@Import({WebMvcAutoConfiguration.EnableWebMvcConfiguration.class})</code>中的这个类，这个类依旧是<code>WebMvcAutoConfiguration</code>中的一个内部类</p>
+<p><img src="https://s1.ax1x.com/2020/04/26/JgyyHP.png" alt="1573891478014"></p>
+<p>重点看一下这个类继承的父类<code>DelegatingWebMvcConfiguration</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DelegatingWebMvcConfiguration</span> <span class="keyword">extends</span> <span class="title">WebMvcConfigurationSupport</span> </span>&#123;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> WebMvcConfigurerComposite configurers = <span class="keyword">new</span> WebMvcConfigurerComposite();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">DelegatingWebMvcConfiguration</span><span class="params">()</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//自动注入，从容器中获取所有的WebMvcConfigurer</span></span><br><span class="line"><span class="meta">@Autowired</span>(</span><br><span class="line">    required = <span class="keyword">false</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setConfigurers</span><span class="params">(List&lt;WebMvcConfigurer&gt; configurers)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!CollectionUtils.isEmpty(configurers)) &#123;</span><br><span class="line">        <span class="keyword">this</span>.configurers.addWebMvcConfigurers(configurers);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 查看其中一个方法</span></span><br><span class="line"><span class="comment">  * this.configurers：也是WebMvcConfigurer接口的一个实现类</span></span><br><span class="line"><span class="comment">  * 看一下调用的configureViewResolvers方法 ↓</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">configureViewResolvers</span><span class="params">(ViewResolverRegistry registry)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.configurers.configureViewResolvers(registry);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureViewResolvers</span><span class="params">(ViewResolverRegistry registry)</span> </span>&#123;</span><br><span class="line">    Iterator var2 = <span class="keyword">this</span>.delegates.iterator();</span><br><span class="line">    <span class="keyword">while</span>(var2.hasNext()) &#123;</span><br><span class="line">        WebMvcConfigurer delegate = (WebMvcConfigurer)var2.next();</span><br><span class="line">        <span class="comment">//将所有的WebMvcConfigurer相关配置都来一起调用；  </span></span><br><span class="line">        delegate.configureViewResolvers(registry);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>容器中所有的WebMvcConfigurer都会一起起作用；</p>
+<p>我们的配置类也会被调用；</p>
+<p>效果：SpringMVC的自动配置和我们的扩展配置都会起作用；</p>
+<p><img src="https://s1.ax1x.com/2020/04/26/JgyrnI.png" alt="1573892805539"></p>
+<h3 id="完全控制springMVC"><a href="#完全控制springMVC" class="headerlink" title="完全控制springMVC"></a>完全控制springMVC</h3><p>如果你不需要springboot关于springmvc做出的默认配置，打算完全控制springmvc（所有默认配置将失效），可以添加自己的<code>@Configuration</code>并使用<code>@EnableWebMvc</code>注解。</p>
+<p>官方文档：</p>
+<blockquote>
+<p>如果您想完全控制Spring MVC，可以添加自己的<code>@Configuration</code>注释<code>@EnableWebMvc</code>。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@EnableWebMvc</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">myWebMvcConfigurer</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br></pre></td></tr></table></figure>
+
+<h4 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h4><p>为什么@EnableWebMvc自动配置就失效了；</p>
+<p>我们看一下EnableWebMvc注解类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@Target</span>(&#123;ElementType.TYPE&#125;)</span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Import</span>(&#123;DelegatingWebMvcConfiguration<span class="class">.<span class="keyword">class</span>&#125;)</span></span><br><span class="line"><span class="class"><span class="title">public</span> @<span class="title">interface</span> <span class="title">EnableWebMvc</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重点在于<code>@Import({DelegatingWebMvcConfiguration.class})</code></p>
+<p><code>DelegatingWebMvcConfiguration</code>是<code>WebMvcConfigurationSupport</code>的子类</p>
+<p>我们再来看一下springmvc的自动配置类<code>WebMvcAutoConfiguration</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span>(</span><br><span class="line">    proxyBeanMethods = <span class="keyword">false</span></span><br><span class="line">)</span><br><span class="line"><span class="meta">@ConditionalOnWebApplication</span>(</span><br><span class="line">    type = Type.SERVLET</span><br><span class="line">)</span><br><span class="line"><span class="meta">@ConditionalOnClass</span>(&#123;Servlet<span class="class">.<span class="keyword">class</span>, <span class="title">DispatcherServlet</span>.<span class="title">class</span>, <span class="title">WebMvcConfigurer</span>.<span class="title">class</span>&#125;)</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">//重点是这个注解，只有当容器中没有这个类型组件的时候该配置类才会生效</span></span><br><span class="line"><span class="class">@<span class="title">ConditionalOnMissingBean</span>(</span>&#123;WebMvcConfigurationSupport<span class="class">.<span class="keyword">class</span>&#125;)</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class">@<span class="title">AutoConfigureOrder</span>(-2147483638)</span></span><br><span class="line"><span class="class">@<span class="title">AutoConfigureAfter</span>(</span>&#123;DispatcherServletAutoConfiguration<span class="class">.<span class="keyword">class</span>, <span class="title">TaskExecutionAutoConfiguration</span>.<span class="title">class</span>, <span class="title">ValidationAutoConfiguration</span>.<span class="title">class</span>&#125;)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">WebMvcAutoConfiguration</span> </span>&#123;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>@EnableWebMvc将WebMvcConfigurationSupport组件导入进来</li>
+<li>导入的WebMvcConfigurationSupport只是SpringMVC最基本的功能</li>
+</ol>
+<h3 id="小结（如何修改springboot的默认配置）"><a href="#小结（如何修改springboot的默认配置）" class="headerlink" title="小结（如何修改springboot的默认配置）"></a>小结（如何修改springboot的默认配置）</h3><ol>
+<li><p>SpringBoot在自动配置很多组件的时候，先看容器中有没有用户自己配置的（@Bean、@Component）如果有就用用户配置的，如果没有，才自动配置。如果有些组件可以有多个（ViewResolver）将用户配置的和自己默认的组合起来。</p>
+<ol start="2">
+<li>在SpringBoot中会有非常多的xxxConfigurer帮助我们进行扩展配置<ol start="3">
+<li>在SpringBoot中会有很多的xxxCustomizer帮助我们进行定制配置</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="Web常用功能示例"><a href="#Web常用功能示例" class="headerlink" title="Web常用功能示例"></a>Web常用功能示例</h2><h3 id="默认访问首页"><a href="#默认访问首页" class="headerlink" title="默认访问首页"></a>默认访问首页</h3><p>配置默认页(/)的映射规则：实现WebMvcConfigurer接口的addViewController方法，添加映射。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyMvcConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addViewControllers</span><span class="params">(ViewControllerRegistry registry)</span> </span>&#123;</span><br><span class="line">        registry.addViewController(<span class="string">"/"</span>).setViewName(<span class="string">"index"</span>);</span><br><span class="line">        registry.addViewController(<span class="string">"/index"</span>).setViewName(<span class="string">"index"</span>);</span><br><span class="line">        registry.addViewController(<span class="string">"/index.html"</span>).setViewName(<span class="string">"index"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="国际化"><a href="#国际化" class="headerlink" title="国际化"></a>国际化</h3><p>mvc中使用国际化的步骤：</p>
+<ol>
+<li>编写国际化配置文件</li>
+<li>使用ResourceBundleMessageSource管理国际化资源文件</li>
+<li>在jsp页面使用fmt:message取出国际化内容</li>
+</ol>
+<p>而在springboot中的使用步骤类似，只不过springboot已经为我们做了自动配置，其步骤大大简化。我们只需要编写国际化文件，然后进行简单配置就可以开始使用国际化了。</p>
+<ol>
+<li><p>编写国际化文件</p>
+<p><img src="https://s1.ax1x.com/2020/04/26/Jgy24S.png" alt="国际化配置"></p>
+<p>以上在resources文件夹下的i18n文件夹下，创建了三个国际化配置文件。文件名的格式为<code>模块名_语言代码_国家代码</code>。没有语言代码和国家代码为默认文件。</p>
+</li>
+<li><p>在配置文件中添加国际化文件的位置和基础名，<strong>basename可以指定多个值，中间用逗号隔开，默认值为messages</strong>。</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.messages.basename</span>=<span class="string">i18n.login</span></span><br><span class="line"><span class="comment"># 关闭缓存 开发是使用</span></span><br><span class="line"><span class="comment"># spring.thymeleaf.cache=false</span></span><br></pre></td></tr></table></figure>
+
+<p>如果配置文件中没有配置基础名，就在类路径下找基础名为<code>message</code>的配置文件</p>
+<p>原理：</p>
+<p>在自动配置类中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span>(proxyBeanMethods = <span class="keyword">false</span>)</span><br><span class="line"><span class="meta">@ConditionalOnMissingBean</span>(name = AbstractApplicationContext.MESSAGE_SOURCE_BEAN_NAME, search = SearchStrategy.CURRENT)</span><br><span class="line"><span class="meta">@AutoConfigureOrder</span>(Ordered.HIGHEST_PRECEDENCE)</span><br><span class="line"><span class="meta">@Conditional</span>(ResourceBundleCondition<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">EnableConfigurationProperties</span></span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">MessageSourceAutoConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Resource[] NO_RESOURCES = &#123;&#125;;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> MessageSource <span class="title">messageSource</span><span class="params">(MessageSourceProperties properties)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//  创建并使用了ResourceBundleMessageSource对象</span></span><br><span class="line">		ResourceBundleMessageSource messageSource = <span class="keyword">new</span> ResourceBundleMessageSource();</span><br><span class="line">        <span class="comment">// 设置basenames属性 basename决定从哪个文件中取数据</span></span><br><span class="line">        <span class="comment">// 其默认值为messages,即默认从messages.properties文件中取国际化文件</span></span><br><span class="line">		<span class="keyword">if</span> (StringUtils.hasText(properties.getBasename())) &#123;</span><br><span class="line">			messageSource.setBasenames(StringUtils</span><br><span class="line">					.commaDelimitedListToStringArray(StringUtils.trimAllWhitespace(properties.getBasename())));</span><br><span class="line">		&#125;</span><br><span class="line">        <span class="comment">//  设置编码</span></span><br><span class="line">		<span class="keyword">if</span> (properties.getEncoding() != <span class="keyword">null</span>) &#123;</span><br><span class="line">			messageSource.setDefaultEncoding(properties.getEncoding().name());</span><br><span class="line">		&#125;</span><br><span class="line">		messageSource.setFallbackToSystemLocale(properties.isFallbackToSystemLocale());</span><br><span class="line">		Duration cacheDuration = properties.getCacheDuration();</span><br><span class="line">		<span class="keyword">if</span> (cacheDuration != <span class="keyword">null</span>) &#123;</span><br><span class="line">			messageSource.setCacheMillis(cacheDuration.toMillis());</span><br><span class="line">		&#125;</span><br><span class="line">		messageSource.setAlwaysUseMessageFormat(properties.isAlwaysUseMessageFormat());</span><br><span class="line">		messageSource.setUseCodeAsDefaultMessage(properties.isUseCodeAsDefaultMessage());</span><br><span class="line">		<span class="keyword">return</span> messageSource;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">protected</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ResourceBundleCondition</span> <span class="keyword">extends</span> <span class="title">SpringBootCondition</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">static</span> ConcurrentReferenceHashMap&lt;String, ConditionOutcome&gt; cache = <span class="keyword">new</span> ConcurrentReferenceHashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">		<span class="meta">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> ConditionOutcome <span class="title">getMatchOutcome</span><span class="params">(ConditionContext context, AnnotatedTypeMetadata metadata)</span> </span>&#123;</span><br><span class="line">			String basename = context.getEnvironment().getProperty(<span class="string">"spring.messages.basename"</span>, <span class="string">"messages"</span>);</span><br><span class="line">			ConditionOutcome outcome = cache.get(basename);</span><br><span class="line">			<span class="keyword">if</span> (outcome == <span class="keyword">null</span>) &#123;</span><br><span class="line">				outcome = getMatchOutcomeForBasename(context, basename);</span><br><span class="line">				cache.put(basename, outcome);</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> outcome;</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在页面中使用消息表达式#{}取值</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">"sr-only"</span> <span class="attr">th:text</span>=<span class="string">"#&#123;login.username&#125;"</span>&gt;</span>Username<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">th:placeholder</span>=<span class="string">"#&#123;login.username&#125;"</span> <span class="attr">required</span>=<span class="string">""</span> <span class="attr">autofocus</span>=<span class="string">""</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>以上，即完成了国际化的基本配置。</p>
+<p>若需要定制国际化，有两种方案：</p>
+<ol>
+<li><p>重写LocaleResolver下的localeResolver方法，该方法返回的localeResolver对象（区域信息对象），springmvc进行所有国际化操作都要获取该对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// WebMvcAutoConfiguration中的localeResolver</span></span><br><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@ConditionalOnMissingBean</span>  <span class="comment">// 容器中没有该对象才会加入，如果我们自己实现并加入容器下面的默认实现就不会生效</span></span><br><span class="line"><span class="meta">@ConditionalOnProperty</span>(prefix = <span class="string">"spring.mvc"</span>, name = <span class="string">"locale"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> LocaleResolver <span class="title">localeResolver</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 如果配置文件中指定了固定的区域信息，就使用固定的</span></span><br><span class="line">	<span class="keyword">if</span> (<span class="keyword">this</span>.mvcProperties.getLocaleResolver() == WebMvcProperties.LocaleResolver.FIXED) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> FixedLocaleResolver(<span class="keyword">this</span>.mvcProperties.getLocale());</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// 根据请求头获取区域信息</span></span><br><span class="line">	AcceptHeaderLocaleResolver localeResolver = <span class="keyword">new</span> AcceptHeaderLocaleResolver();</span><br><span class="line">	localeResolver.setDefaultLocale(<span class="keyword">this</span>.mvcProperties.getLocale());</span><br><span class="line">	<span class="keyword">return</span> localeResolver;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以重写该方法，并将它加入容器。</p>
+<p>示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">myWebMvcConfigurer</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">myLocaleResolver</span> <span class="keyword">implements</span> <span class="title">LocaleResolver</span></span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Locale <span class="title">resolveLocale</span><span class="params">(HttpServletRequest httpServletRequest)</span> </span>&#123;</span><br><span class="line">            String language = httpServletRequest.getParameter(<span class="string">"lang"</span>);</span><br><span class="line">            <span class="keyword">if</span> (StringUtils.isEmpty(language)) &#123;</span><br><span class="line">                <span class="comment">// 路径上没有国际化语言参数，采用默认的（从请求头中获取）</span></span><br><span class="line">                <span class="keyword">return</span> httpServletRequest.getLocale();</span><br><span class="line">            &#125;</span><br><span class="line">            String[] s = language.split(<span class="string">"_"</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Locale(s[<span class="number">0</span>],s[<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setLocale</span><span class="params">(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Locale locale)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> LocaleResolver <span class="title">localeResolver</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> myLocaleResolver();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加localeChangeInterceptor拦截器。该拦截器可以获取请求参数并根据参数改变区域信息。但<strong>注意该拦截器可以和会话区域解析器以及Cookie区域解析器一起使用的，但是不能和FixedLocaleResolver或者默认的AcceptHeaderLocaleResolver一起使用，否则会抛出异常信息。</strong></p>
+<p><img src="https://s1.ax1x.com/2020/04/26/JgysBt.png" alt="img"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">myWebMvcConfigurer</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> LocaleResolver <span class="title">localeResolver</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> SessionLocaleResolver();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> LocaleChangeInterceptor <span class="title">localeChangeInterceptor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        LocaleChangeInterceptor localeChangeInterceptor = <span class="keyword">new</span> LocaleChangeInterceptor();</span><br><span class="line">        localeChangeInterceptor.setParamName(<span class="string">"lang"</span>);</span><br><span class="line">        <span class="keyword">return</span> localeChangeInterceptor;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addInterceptors</span><span class="params">(InterceptorRegistry registry)</span> </span>&#123;</span><br><span class="line">        registry.addInterceptor(localeChangeInterceptor());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ol>
+<h4 id="补充阅读"><a href="#补充阅读" class="headerlink" title="补充阅读"></a>补充阅读</h4><p><a href="https://blog.csdn.net/u012834750/article/details/79315968" target="_blank" rel="noopener">SpringBoot系列(九)国际化</a></p>
+<h3 id="修改页面立即生效"><a href="#修改页面立即生效" class="headerlink" title="修改页面立即生效"></a>修改页面立即生效</h3><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 禁用缓存</span></span><br><span class="line"><span class="meta">spring.thymeleaf.cache</span>=<span class="string">falseCopy to clipboardErrorCopied</span></span><br></pre></td></tr></table></figure>
+
+<p>在页面修改完成以后按快捷键<code>ctrl+f9</code>，重新编译。</p>
+<h3 id="添加拦截器"><a href="#添加拦截器" class="headerlink" title="添加拦截器"></a>添加拦截器</h3><p>和MVC中的使用相同，先实现HandlerIntercept接口，然后将它注册进容器即可。</p>
+<h2 id="错误处理机制"><a href="#错误处理机制" class="headerlink" title="错误处理机制"></a>错误处理机制</h2><h3 id="默认事务处理机制"><a href="#默认事务处理机制" class="headerlink" title="默认事务处理机制"></a>默认事务处理机制</h3><p>默认效果：</p>
+<ol>
+<li><p>浏览器：</p>
+<p><img src="https://s1.ax1x.com/2020/04/26/Jgyhcj.png" alt="浏览器的错误信息"></p>
+<p>注意请求头中的Accept请求了html数据。</p>
+</li>
+<li><p>其他客户端：由于请求时没有指定返回html数据，默认返回json数据（这里使用fiddler测试）。</p>
+<p><img src="https://s1.ax1x.com/2020/04/26/Jgyf3Q.png" alt="非浏览器"></p>
+</li>
+</ol>
+<h3 id="处理机制"><a href="#处理机制" class="headerlink" title="处理机制"></a>处理机制</h3><p>依旧从springboot的自动配置类入手，查看<code>org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration</code>，在这里对springboot错误处理做了自动配置。</p>
+<p>主要给日容器中注册了以下组件：</p>
+<ul>
+<li>ErrorPageCustomizer 系统出现错误以后来到error请求进行处理；相当于（web.xml注册的错误页面规则）</li>
+<li>BasicErrorController 处理/error请求</li>
+<li>DefaultErrorViewResolver 默认的错误视图解析器</li>
+<li>DefaultErrorAttributes 错误信息</li>
+<li>defaultErrorView 默认错误视图</li>
+</ul>
+<h4 id="errorPageCustomizer"><a href="#errorPageCustomizer" class="headerlink" title="errorPageCustomizer"></a>errorPageCustomizer</h4><p>一旦出现了错误，errorPageCustomizer就会生效，来定制错误的响应规则。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ErrorPageCustomizer <span class="title">errorPageCustomizer</span><span class="params">(DispatcherServletPath dispatcherServletPath)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> ErrorPageCustomizer(<span class="keyword">this</span>.serverProperties, dispatcherServletPath);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ErrorPageCustomizer</span> <span class="keyword">implements</span> <span class="title">ErrorPageRegistrar</span>, <span class="title">Ordered</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">    <span class="comment">//  注册错误页面`/error`</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerErrorPages</span><span class="params">(ErrorPageRegistry errorPageRegistry)</span> </span>&#123;</span><br><span class="line">		ErrorPage errorPage = <span class="keyword">new</span> ErrorPage(<span class="keyword">this</span>.dispatcherServletPath.getRelativePath(<span class="keyword">this</span>.properties.getError().getPath()));</span><br><span class="line">		errorPageRegistry.addErrorPages(errorPage);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 上个代码块中的getPath()获取的值，若配置文件中未指定，默认为/error</span></span><br><span class="line"><span class="meta">@Value</span>(<span class="string">"$&#123;error.path:/error&#125;"</span>)</span><br><span class="line"><span class="keyword">private</span> String path = <span class="string">"/error"</span>;</span><br></pre></td></tr></table></figure>
+
+<p>依此，将错误转发到<code>/error</code>，然后由<code>BasicErrorController</code>处理该请求。</p>
+<h4 id="basicErrorController"><a href="#basicErrorController" class="headerlink" title="basicErrorController"></a>basicErrorController</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@ConditionalOnMissingBean</span>(value = ErrorController<span class="class">.<span class="keyword">class</span>, <span class="title">search</span> </span>= SearchStrategy.CURRENT)</span><br><span class="line"><span class="function"><span class="keyword">public</span> BasicErrorController <span class="title">basicErrorController</span><span class="params">(ErrorAttributes errorAttributes,</span></span></span><br><span class="line"><span class="function"><span class="params">		ObjectProvider&lt;ErrorViewResolver&gt; errorViewResolvers)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> BasicErrorController(errorAttributes, <span class="keyword">this</span>.serverProperties.getError(),</span><br><span class="line">			errorViewResolvers.orderedStream().collect(Collectors.toList()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 优先使用配置文件中的server.error.path</span></span><br><span class="line"><span class="comment">* 若没有配置server.error.path，则使用error.path</span></span><br><span class="line"><span class="comment">* 若error.path也没有配置，则使用/error</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"$&#123;server.error.path:$&#123;error.path:/error&#125;&#125;"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BasicErrorController</span> <span class="keyword">extends</span> <span class="title">AbstractErrorController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 请求html数据时的处理器</span></span><br><span class="line">	<span class="meta">@RequestMapping</span>(produces = MediaType.TEXT_HTML_VALUE)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> ModelAndView <span class="title">errorHtml</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span> </span>&#123;</span><br><span class="line">		HttpStatus status = getStatus(request);</span><br><span class="line">		Map&lt;String, Object&gt; model = Collections</span><br><span class="line">				.unmodifiableMap(getErrorAttributes(request, isIncludeStackTrace(request, MediaType.TEXT_HTML)));</span><br><span class="line">		response.setStatus(status.value());</span><br><span class="line">		ModelAndView modelAndView = resolveErrorView(request, response, status, model);</span><br><span class="line">		<span class="keyword">return</span> (modelAndView != <span class="keyword">null</span>) ? modelAndView : <span class="keyword">new</span> ModelAndView(<span class="string">"error"</span>, model);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 非html数据（返回json）的处理器</span></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	* ResponseEntity的优先级高于<span class="doctag">@ResponseBody</span>，</span></span><br><span class="line"><span class="comment">	* 在不是ResponseEntity的情况下才去检查有没有<span class="doctag">@ResponseBody</span>注解。</span></span><br><span class="line"><span class="comment">	* 如果响应类型是ResponseEntity可以不写<span class="doctag">@ResponseBody</span>注解，写了也没有关系。</span></span><br><span class="line"><span class="comment">	*/</span></span><br><span class="line">	<span class="meta">@RequestMapping</span></span><br><span class="line">	<span class="keyword">public</span> ResponseEntity&lt;Map&lt;String, Object&gt;&gt; error(HttpServletRequest request) &#123;</span><br><span class="line">		HttpStatus status = getStatus(request);</span><br><span class="line">		<span class="keyword">if</span> (status == HttpStatus.NO_CONTENT) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(status);</span><br><span class="line">		&#125;</span><br><span class="line">        <span class="comment">// 注意此处getErrorAttributes下边将会再次提到</span></span><br><span class="line">		Map&lt;String, Object&gt; body = getErrorAttributes(request, isIncludeStackTrace(request, MediaType.ALL));</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> ResponseEntity&lt;&gt;(body, status);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这两个方法一个用于响应html页面，一个用于响应json数据</p>
+<p>前一个方法中，modelAndView保存了数据和视图对象，看一下它调用的resolveErrorView方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> ModelAndView <span class="title">resolveErrorView</span><span class="params">(HttpServletRequest request, HttpServletResponse response, HttpStatus status,</span></span></span><br><span class="line"><span class="function"><span class="params">  Map&lt;String, Object&gt; model)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 从所有的errorViewResolver对象中获取ModelAndView</span></span><br><span class="line">	<span class="keyword">for</span> (ErrorViewResolver resolver : <span class="keyword">this</span>.errorViewResolvers) &#123;</span><br><span class="line">		ModelAndView modelAndView = resolver.resolveErrorView(request, status, model);</span><br><span class="line">		<span class="keyword">if</span> (modelAndView != <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">return</span> modelAndView;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么这些errorViewResolver是从哪里来的？我可可以看到容器中已经注册了一个<code>DefaultErrorViewResolver</code></p>
+<h4 id="DefaultErrorViewResolver"><a href="#DefaultErrorViewResolver" class="headerlink" title="DefaultErrorViewResolver"></a>DefaultErrorViewResolver</h4><p>在ErrorMvcAutoConfiguration中有一个内部类DefaultErrorViewResolverConfiguration。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span>(proxyBeanMethods = <span class="keyword">false</span>)</span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultErrorViewResolverConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> ApplicationContext applicationContext;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> ResourceProperties resourceProperties;</span><br><span class="line"></span><br><span class="line">	DefaultErrorViewResolverConfiguration(ApplicationContext applicationContext,</span><br><span class="line">			ResourceProperties resourceProperties) &#123;</span><br><span class="line">		<span class="keyword">this</span>.applicationContext = applicationContext;</span><br><span class="line">		<span class="keyword">this</span>.resourceProperties = resourceProperties;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="meta">@ConditionalOnBean</span>(DispatcherServlet<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">	@<span class="title">ConditionalOnMissingBean</span>(<span class="title">ErrorViewResolver</span>.<span class="title">class</span>)</span></span><br><span class="line"><span class="class">	<span class="title">DefaultErrorViewResolver</span> <span class="title">conventionErrorViewResolver</span>() </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> DefaultErrorViewResolver(<span class="keyword">this</span>.applicationContext, <span class="keyword">this</span>.resourceProperties);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>详细看一下这个DefaultErrorViewResolver</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultErrorViewResolver</span> <span class="keyword">implements</span> <span class="title">ErrorViewResolver</span>, <span class="title">Ordered</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> ModelAndView <span class="title">resolveErrorView</span><span class="params">(HttpServletRequest request, HttpStatus status, Map&lt;String, Object&gt; model)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 把状态码和model传过去获取视图</span></span><br><span class="line">		ModelAndView modelAndView = resolve(String.valueOf(status.value()), model);</span><br><span class="line">		<span class="comment">// 如果没有获取到就将状态码4开头替换成4xx，5开头替换成5xx，如404、500替换成4xx、5xx再去获取</span></span><br><span class="line">		<span class="keyword">if</span> (modelAndView == <span class="keyword">null</span> &amp;&amp; SERIES_VIEWS.containsKey(status.series())) &#123;</span><br><span class="line">			modelAndView = resolve(SERIES_VIEWS.get(status.series()), model);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> modelAndView;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> ModelAndView <span class="title">resolve</span><span class="params">(String viewName, Map&lt;String, Object&gt; model)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//  这里的errorViewName="error/" + 错误代码</span></span><br><span class="line">		String errorViewName = <span class="string">"error/"</span> + viewName;</span><br><span class="line">		<span class="comment">//  如果模板引擎可用，就使用模板引擎解析这个错误页面</span></span><br><span class="line">		TemplateAvailabilityProvider provider = <span class="keyword">this</span>.templateAvailabilityProviders.getProvider(errorViewName,</span><br><span class="line">				<span class="keyword">this</span>.applicationContext);</span><br><span class="line">		<span class="keyword">if</span> (provider != <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">new</span> ModelAndView(errorViewName, model);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//  模板引擎不可用就当做普通http资源解析</span></span><br><span class="line">		<span class="keyword">return</span> resolveResource(errorViewName, model);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">private</span> ModelAndView <span class="title">resolveResource</span><span class="params">(String viewName, Map&lt;String, Object&gt; model)</span> </span>&#123;</span><br><span class="line">		<span class="comment">//  资源文件夹下寻找error/错误代码.html是否存在，存在就作为视图返回</span></span><br><span class="line">		<span class="keyword">for</span> (String location : <span class="keyword">this</span>.resourceProperties.getStaticLocations()) &#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				Resource resource = <span class="keyword">this</span>.applicationContext.getResource(location);</span><br><span class="line">				resource = resource.createRelative(viewName + <span class="string">".html"</span>);</span><br><span class="line">				<span class="keyword">if</span> (resource.exists()) &#123;</span><br><span class="line">					<span class="keyword">return</span> <span class="keyword">new</span> ModelAndView(<span class="keyword">new</span> HtmlResourceView(resource), model);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>到这里，ModelAndView中的view就基本解决，那么model（数据）从哪里获取？</p>
+<h4 id="getErrorAttributes"><a href="#getErrorAttributes" class="headerlink" title="getErrorAttributes"></a>getErrorAttributes</h4><p>我们回到前边basicErrorController中那个以ResponseEntity为返回值的error方法中，前边已经提到，这个方法来返回json数据。从这里就能找到我们想要的数据，其中调用了getErrorAttributes方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> Map&lt;String, Object&gt; <span class="title">getErrorAttributes</span><span class="params">(HttpServletRequest request, <span class="keyword">boolean</span> includeStackTrace)</span> </span>&#123;</span><br><span class="line">	WebRequest webRequest = <span class="keyword">new</span> ServletWebRequest(request);</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">this</span>.errorAttributes.getErrorAttributes(webRequest, includeStackTrace);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的errorAttributes是一个ErrorAttributes接口的实现DefaultErrorAttributes对象，再看实现中的getErrorAttributes方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Map&lt;String, Object&gt; <span class="title">getErrorAttributes</span><span class="params">(WebRequest webRequest, <span class="keyword">boolean</span> includeStackTrace)</span> </span>&#123;</span><br><span class="line">    Map&lt;String, Object&gt; errorAttributes = <span class="keyword">new</span> LinkedHashMap();</span><br><span class="line">    errorAttributes.put(<span class="string">"timestamp"</span>, <span class="keyword">new</span> Date());</span><br><span class="line">    <span class="keyword">this</span>.addStatus(errorAttributes, webRequest);</span><br><span class="line">    <span class="keyword">this</span>.addErrorDetails(errorAttributes, webRequest, includeStackTrace);</span><br><span class="line">    <span class="keyword">this</span>.addPath(errorAttributes, webRequest);</span><br><span class="line">    <span class="keyword">return</span> errorAttributes;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以获取的属性：</p>
+<ul>
+<li>timestamp：时间戳</li>
+<li>status：状态码</li>
+<li>error：错误提示</li>
+<li>exception：异常对象</li>
+<li>message：异常消息</li>
+<li>errors：JSR303数据校验的错误都在这里</li>
+</ul>
+<p>2.0以后默认是不显示exception的，需要在配置文件中开启</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">server.error.include-exception</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="defaultErrorView"><a href="#defaultErrorView" class="headerlink" title="defaultErrorView"></a>defaultErrorView</h4><ul>
+<li><p>首先在模板引擎下找错误页面</p>
+</li>
+<li><p>没有模板引擎（模板引擎找不到这个错误页面），就会在静态资源文件夹下找</p>
+</li>
+<li><p>如果以上都没有找到错误页面，就是默认来到SpringBoot默认的错误提示页面（这里的whitelabel）</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span>(proxyBeanMethods = <span class="keyword">false</span>)</span><br><span class="line"><span class="meta">@ConditionalOnProperty</span>(prefix = <span class="string">"server.error.whitelabel"</span>, name = <span class="string">"enabled"</span>, matchIfMissing = <span class="keyword">true</span>)</span><br><span class="line"><span class="meta">@Conditional</span>(ErrorTemplateMissingCondition<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">protected</span> <span class="title">static</span> <span class="title">class</span> <span class="title">WhitelabelErrorViewConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> StaticView defaultErrorView = <span class="keyword">new</span> StaticView();</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Bean</span>(name = <span class="string">"error"</span>)</span><br><span class="line">	<span class="meta">@ConditionalOnMissingBean</span>(name = <span class="string">"error"</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> View <span class="title">defaultErrorView</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>.defaultErrorView;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// If the user adds @EnableWebMvc then the bean name view resolver from</span></span><br><span class="line">	<span class="comment">// WebMvcAutoConfiguration disappears, so add it back in to avoid disappointment.</span></span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> BeanNameViewResolver <span class="title">beanNameViewResolver</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		BeanNameViewResolver resolver = <span class="keyword">new</span> BeanNameViewResolver();</span><br><span class="line">		resolver.setOrder(Ordered.LOWEST_PRECEDENCE - <span class="number">10</span>);</span><br><span class="line">		<span class="keyword">return</span> resolver;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>扩展阅读：<a href="https://www.hifreud.com/2017/06/30/spring-boot-13-user-defined-white-label-page/" target="_blank" rel="noopener">Spring Boot(十三) - 自定义WhiteLabel错误页面</a></p>
+<h2 id="定制错误处理"><a href="#定制错误处理" class="headerlink" title="定制错误处理"></a>定制错误处理</h2><h3 id="定制错误处理响应页面"><a href="#定制错误处理响应页面" class="headerlink" title="定制错误处理响应页面"></a>定制错误处理响应页面</h3><p>有模板引擎的情况下：将错误页面命名为 <code>错误状态码.html</code> 放在模板引擎文件夹的error文件夹下，当发生此状态码的错误就会来到这里找对应的页面。比如我们在template文件夹下创建error/404.html当浏览器请求是404错误，就会使用我们创建的404.html页面响应，如果是其他状态码错误，还是使用默认的视图，但是如果404.html没有找到就会替换成4XX.html再查找一次。</p>
+<p>没有模板引擎的情况下：在<strong>静态资源文件夹下</strong>创建<strong>error/错误代码.html</strong>文件。</p>
+<h3 id="定制json数据"><a href="#定制json数据" class="headerlink" title="定制json数据"></a>定制json数据</h3><p>前边已经提到，springboot可以根据请求消息头自适应的判断返回html页面还是json数据。返回json的两种方案：</p>
+<ol>
+<li><p>配置全局异常处理器，并将其注入容器，捕捉到异常后返回json数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ControllerAdvice</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyExceptionHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="meta">@ExceptionHandler</span>(Exception<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">    <span class="title">public</span> <span class="title">Map</span>&lt;<span class="title">String</span>, <span class="title">Object</span>&gt; <span class="title">handleException</span>(<span class="title">Exception</span> <span class="title">e</span>) </span>&#123;</span><br><span class="line">        Map&lt;String, Object&gt; map = <span class="keyword">new</span> HashMap(<span class="number">2</span>);</span><br><span class="line">        map.put(<span class="string">"code"</span>, <span class="string">"100011"</span>);</span><br><span class="line">        map.put(<span class="string">"msg"</span>, e.getMessage());</span><br><span class="line">        <span class="keyword">return</span> map;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是，这样就失去了自适应性，所有错误请求都将返回json数据。</p>
+</li>
+<li><p>捕获到异常后，将其转发到/error</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ControllerAdvice</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyExceptionHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ExceptionHandler</span>(Exception<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">    <span class="title">public</span> <span class="title">String</span> <span class="title">handleException</span>(<span class="title">Exception</span> <span class="title">e</span>,  <span class="title">HttpServletRequest</span> <span class="title">request</span>) </span>&#123;</span><br><span class="line">        Map&lt;String, Object&gt; map = <span class="keyword">new</span> HashMap(<span class="number">2</span>);</span><br><span class="line">        map.put(<span class="string">"code"</span>, <span class="string">"100011"</span>);</span><br><span class="line">        map.put(<span class="string">"msg"</span>, e.getMessage());</span><br><span class="line">        <span class="comment">//注意：这里需要手动设置状态码，否则将会返回200</span></span><br><span class="line">        request.setAttribute(<span class="string">"javax.servlet.error.status_code"</span>, <span class="number">500</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"forward:/error"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是这样之后，传递的数据就没有用了，只能使用默认的</p>
+<p>由上面我们已经知道数据的来源是调用DefaultErrorAttributes的getErrorAttributes方法得到的，而这个DefaultErrorAttributes是在ErrorMvcAutoConfiguration配置类中注册的，并且注册之前会检查容器中是否已经拥有</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="meta">@ConditionalOnMissingBean</span>(value = &#123;ErrorAttributes<span class="class">.<span class="keyword">class</span>&#125;,<span class="title">search</span> </span>= SearchStrategy.CURRENT)</span><br><span class="line"><span class="function"><span class="keyword">public</span> DefaultErrorAttributes <span class="title">errorAttributes</span><span class="params">()</span> </span>&#123;</span><br></pre></td></tr></table></figure>
+
+<p>所以我们可以只要实现ErrorAttributes接口或者继承DefaultErrorAttributes类，然后注册到容器中就行了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ControllerAdvice</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyExceptionHandler</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ExceptionHandler</span>(Exception<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">    <span class="title">public</span> <span class="title">String</span> <span class="title">handleException</span>(<span class="title">Exception</span> <span class="title">e</span>, <span class="title">HttpServletRequest</span> <span class="title">request</span>) </span>&#123;</span><br><span class="line">        Map&lt;String, Object&gt; map = <span class="keyword">new</span> HashMap();</span><br><span class="line">        map.put(<span class="string">"name"</span>, <span class="string">"hello"</span>);</span><br><span class="line">        map.put(<span class="string">"password"</span>, <span class="string">"123456"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//设置状态码</span></span><br><span class="line">        request.setAttribute(<span class="string">"javax.servlet.error.status_code"</span>, <span class="number">500</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//把数据放到request域中</span></span><br><span class="line">        request.setAttribute(<span class="string">"sutdent"</span>, map);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"forward:/error"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyMvcConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> DefaultErrorAttributes <span class="title">errorAttributes</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> MyErrorAttributes();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">MyErrorAttributes</span> <span class="keyword">extends</span> <span class="title">DefaultErrorAttributes</span> </span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Map&lt;String, Object&gt; <span class="title">getErrorAttributes</span><span class="params">(WebRequest webRequest, <span class="keyword">boolean</span> includeStackTrace)</span> </span>&#123;</span><br><span class="line">            <span class="comment">//调用父类的方法获取默认的数据</span></span><br><span class="line">            Map&lt;String, Object&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;(<span class="keyword">super</span>.getErrorAttributes(webRequest, includeStackTrace));</span><br><span class="line">            <span class="comment">//从request域从获取到自定义数据</span></span><br><span class="line">            Map&lt;String, Object&gt; student = (Map&lt;String, Object&gt;) webRequest.getAttribute(<span class="string">"student"</span>, RequestAttributes.SCOPE_REQUEST);</span><br><span class="line">            map.putAll(student);</span><br><span class="line">            <span class="keyword">return</span> map;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+</li>
+</ol>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>pandaaaaaa</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://yoursite.com/springboot05%20web%E5%BC%80%E5%8F%91/">http://yoursite.com/springboot05%20web%E5%BC%80%E5%8F%91/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/SpringBoot/"># SpringBoot</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/springboot06%20servlet%E5%AE%B9%E5%99%A8/">springboot06 servlet容器</a>
+            
+            
+            <a class="next" rel="next" href="/springboot04%20%E6%97%A5%E5%BF%97/">springboot04 日志</a>
+            
+        </section>
+        <section>
+            <div class="comment" style="clear: both; margin-top: 38;"></div>
+        </section>
+    
+    </article>
+    
+        <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<!--Valine 的核心代码库-->
+<script src="/js/valine.min.js"></script>
+
+
+<script>
+    new Valine({
+        // AV 对象来自上面引入av-min.js(老司机们不要开车➳♡゛扎心了老铁)
+        av: AV, 
+        el: '.comment',
+	      lang: '',//设置评论语言
+        emoticon_url: 'https://cloud.panjunwen.com/alu',
+  emoticon_list: ["狂汗.png","不说话.png","汗.png","坐等.png","献花.png","不高兴.png","中刀.png","害羞.png","皱眉.png","小眼睛.png","暗地观察.png"],
+  app_id: 'TmbiNFkUq1bDjqdBf25VTp3b-MdYXbMMI',
+  app_key: 'dBwYjVpP5M0dq0sQVwznG13I',
+  placeholder: 'Write a Comment'
+    });
+</script>
+
+<!--
+<script>
+  new Valine({
+      el: '.comment',
+      notify: true,
+      verify: false,
+      app_id: 'TmbiNFkUq1bDjqdBf25VTp3b-MdYXbMMI',
+      app_key: 'dBwYjVpP5M0dq0sQVwznG13I',
+      lang: 'en',
+      placeholder: 'Write a Comment',
+      avatar: 'monsterid',
+      visitor: true
+        });
+</script>
+-->
+        
+</div>
+
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© pandaaaaaa | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
